@@ -7,7 +7,9 @@ output: html_notebook
 
 Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
 
+### Install package and check the dataset
 install.packages(nycflights13)
+help(flights)
 
 ```{r echo=TRUE}
 library(nycflights13)
@@ -16,17 +18,17 @@ head(fligths)
 ```
 
 
-##  Que arribaron con un retraso de mas de dos horas.
+###  Que arribaron con un retraso de mas de dos horas.
 
 ```{r}
 subset(fligths, arr_delay > 120)
 ```
 
-##Volaron hacia Houston (IAH o HOU)
+### Los vuelos que volaron hacia Houston (IAH o HOU)
 ```{r}
 subset(fligths, dest == "IAH" | dest == "HOU")
 ```
-## Fueron operados por United, American o Delta.
+## Los vuelos operados por United "UA", American "AA" o Delta "DL".
 ```{r}
 airlines<-nycflights13::airlines
 airlines
