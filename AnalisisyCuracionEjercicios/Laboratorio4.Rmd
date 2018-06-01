@@ -1,0 +1,205 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+library("jpeg")
+jj <- readJPEG("car_body.jpg",native=TRUE)
+plot(0:1,0:1,type="n",ann=FALSE,axes=FALSE)
+rasterImage(jj,0,0,1,1)
+
+```
+
+```{r}
+#library(imager)
+#im<-load.image("car_body.jpg")
+#plot(im, ann=FALSE,axes=FALSE)
+```
+
+```{r}
+head(car_ad)
+```
+
+```{r}
+library(ggplot2)
+ggplot(car_ad, aes(price /1000 , mileage , color = body ))   + geom_point() 
+```
+
+```{r}
+boxplot ( subset(car_ad , select = (price  )))
+boxplot ( subset(car_ad,  select = (mileage )))
+
+```
+
+```{r}
+
+autos = subset (car_ad, mileage < 400  & mileage > 0  & price < 28000 & price > 5000)
+ggplot(autos, aes(price  , mileage  , color = body))   + geom_point() 
+boxplot ( subset(autos , select = (price  )))
+boxplot ( subset(autos,  select = (mileage )))
+summary (autos)
+
+```
+
+```{r}
+
+library(class)
+
+#autos[2] <- lapply(autos[2], scale)
+#autos[4] <- lapply(autos[4], scale)
+#head(autos)
+set.seed(123) 
+test <- 1:1500
+autos.subset <- subset (autos, select = c(price, mileage))
+train.autos <- autos.subset[-test,]
+test.autos <- autos.subset[test,]
+
+train.body <- autos$body[-test]
+test.body <- autos$body[test]
+
+knn.a <-  knn(train.autos, test.autos, train.body, k=1)
+knn.b <-  knn(train.autos, test.autos, train.body, k=5)
+knn.c <- knn(train.autos, test.autos, train.body, k=10)
+
+print ('Con K = 1 el porcentaje de clasificacion correcta es: ')
+100 * sum(test.body == knn.a)/1500  # For knn = 1
+print ("Con K = 5 el porcentaje de clasificacion correcta es: ")
+100 * sum(test.body == knn.b)/1500  # For knn = 6
+print ("Con K = 10 el porcentaje de clasificacion correcta es: ")
+100 * sum(test.body == knn.c)/1500  # For knn = 100
+
+```
+
+
+```{r}
+table(knn.a ,test.body)
+table(knn.b ,test.body)
+table(knn.c ,test.body)
+```
+
+```{r}
+print('Vemos que los datos se confunden mucho por lo que voy a hacer el mismo análisis con menos tipos de chasis ')
+summary (autos)
+```
+```{r}
+#Dado que la mayoría de los chasis son sedan o crossover eliminamos el resto de los tipos de chasis
+autos2 = subset (car_ad, mileage < 400  & mileage > 0  & price < 200000 & price > 5000 & (body == "crossover" | body == "sedan")  )
+ggplot(autos2, aes(price  , mileage  , color = body))   + geom_point() 
+summary (autos2)
+```
+
+```{r}
+
+set.seed(123) 
+test <- 1:3500
+autos2.subset <- subset (autos2, select = c(price, mileage))
+train.autos2 <- autos2.subset[-test,]
+test.autos2 <- autos2.subset[test,]
+
+train.body2 <- autos2$body[-test]
+test.body2 <- autos2$body[test]
+
+knn.a2 <-  knn(train.autos2, test.autos2, train.body2, k=2)
+knn.b2 <-  knn(train.autos2, test.autos2, train.body2, k=5)
+knn.c2 <- knn(train.autos2, test.autos2, train.body2, k=20)
+
+print ('Con K = 1 el porcentaje de clasificacion correcta es: ')
+100 * sum(test.body2 == knn.a2)/3500  # For knn = 2
+print ("Con K = 5 el porcentaje de clasificacion correcta es: ")
+100 * sum(test.body2 == knn.b2)/3500  # For knn = 5
+print ("Con K = 20 el porcentaje de clasificacion correcta es: ")
+100 * sum(test.body2 == knn.c2)/3500  # For knn = 20
+
+```
+
+```{r}
+table(knn.a2 ,test.body2)
+table(knn.b2 ,test.body2)
+table(knn.c2 ,test.body2)
+
+```
+
+```{r}
+#Observamos que k = 20  posee  mayor cantidad de clasificaciones y porcentaje de proyecciones correctas.   Aunque con un porcentaje de predicciones correctas  pequeño.
+
+#Probamos ahora normalizando los datos.
+```
+
+```{r}
+autosn <- autos2
+autosn[2] <- lapply(autos2[2], scale)
+autosn[4] <- lapply(autos2[4], scale)
+#head(autos)
+set.seed(123) 
+test <- 1:3500
+autosn.subset <- subset (autosn, select = c(price, mileage))
+train.autosn <- autosn.subset[-test,]
+test.autosn <- autosn.subset[test,]
+
+train.bodyn <- autosn$body[-test]
+test.bodyn <- autosn$body[test]
+
+knn.an <-  knn(train.autosn, test.autosn, train.bodyn, k=2)
+knn.bn <-  knn(train.autosn, test.autosn, train.bodyn, k=5)
+knn.cn <- knn(train.autosn, test.autosn, train.bodyn, k=20)
+
+print ('Con K = 1 el porcentaje de clasificacion correcta es: ')
+100 * sum(test.bodyn == knn.an)/3500  # For knn = 2
+print ("Con K = 5 el porcentaje de clasificacion correcta es: ")
+100 * sum(test.bodyn == knn.bn)/3500  # For knn = 5
+print ("Con K = 20 el porcentaje de clasificacion correcta es: ")
+100 * sum(test.bodyn == knn.cn)/3500  # For knn = 20
+
+```
+
+```{r}
+table(knn.an ,test.bodyn)
+table(knn.bn ,test.bodyn)
+table(knn.cn ,test.bodyn)
+```
+
+```{r}
+#En este caso vemos con tras la normalizacion de los datos la clasificacion de los sedan mejoro pero la de los crossover empeoro.
+```
+
+```{r}
+normalize <- function(x) {
+  return ((x-min(x))/(max(x)-min(x)))}
+```
+
+```{r}
+autosn2 <- autos2
+autosn2[2]<- as.data.frame(lapply(autos2[2], normalize))
+autosn2[4] <- as.data.frame(lapply(autos2[4], normalize))
+
+set.seed(123) 
+test <- 1:3500
+autosn2.subset <- subset (autosn2, select = c(price, mileage))
+train.autosn2 <- autosn2.subset[-test,]
+test.autosn2 <- autosn2.subset[test,]
+
+train.bodyn2 <- autosn2$body[-test]
+test.bodyn2 <- autosn2$body[test]
+
+knn.an2 <-  knn(train.autosn2, test.autosn2, train.bodyn2, k=2)
+knn.bn2 <-  knn(train.autosn2, test.autosn2, train.bodyn2, k=5)
+knn.cn2 <- knn(train.autosn2, test.autosn2, train.bodyn2, k=20)
+
+print ('Con K = 1 el porcentaje de clasificacion correcta es: ')
+100 * sum(test.bodyn2 == knn.an2)/3500  # For knn = 2
+print ("Con K = 5 el porcentaje de clasificacion correcta es: ")
+100 * sum(test.bodyn2 == knn.bn2)/3500  # For knn = 5
+print ("Con K = 20 el porcentaje de clasificacion correcta es: ")
+100 * sum(test.bodyn2 == knn.cn2)/3500  # For knn = 20
+```
+
+```{r}
+table(knn.an2 ,test.bodyn2)
+table(knn.bn2 ,test.bodyn2)
+table(knn.cn2 ,test.bodyn2)
+```
