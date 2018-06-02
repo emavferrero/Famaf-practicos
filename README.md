@@ -1,19 +1,10 @@
 # Famaf-practicos
 
-This repo was made for the homeworks of the Data Science Bachelour @Famav
+Este repo fue realizado para los trabajos prácticos y seguimiento de la Diplomatura en Ciencia de datos en  @Famaf
+
+Integrantes del equipo:
+Bruno Magnano
+Emanuel Vilte Ferrero
+Marcelo Gutierrez
 
 
-Laboratorios
-
-  Lab 1
-  
-  Lab 2
-  
-  Lab 3
-  
-  
-  
-Tareas Integradoreas
-  Tarea 1
-  
-  Tarea 2
